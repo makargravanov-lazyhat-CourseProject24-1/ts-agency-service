@@ -1,1 +1,5 @@
 # ts-agency-service
+
+PARENT PROJECT
+
+RUN ONLY WITH ROOT PROJECT
