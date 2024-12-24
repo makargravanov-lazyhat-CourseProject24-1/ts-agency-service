@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.exposed.javaTime)
     implementation(libs.springdoc.openapi)
     runtimeOnly(libs.postgresqlDriver)
+    implementation(libs.spring.cloud.openfeign)
 }
 
 kotlin {
@@ -33,4 +34,10 @@ kotlin {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
     jvmToolchain(21)
+}
+
+dependencyManagement {
+    imports {
+        mavenBom(libs.bom.spring.cloud.dependencies.get().toString())
+    }
 }

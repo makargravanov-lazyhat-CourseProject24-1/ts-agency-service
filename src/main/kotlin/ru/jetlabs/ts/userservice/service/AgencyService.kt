@@ -6,13 +6,17 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import ru.jetlabs.ts.userservice.AgencyServiceApplication
+import ru.jetlabs.ts.userservice.client.AgencyBindRequest
+import ru.jetlabs.ts.userservice.client.PaymentClient
 import ru.jetlabs.ts.userservice.models.*
 import ru.jetlabs.ts.userservice.tables.Agencies
 import java.sql.SQLException
 
 @Component
 @Transactional
-class AgencyService {
+class AgencyService(
+    val paymentClient: PaymentClient
+) {
     companion object {
         val LOGGER = LoggerFactory.getLogger(AgencyServiceApplication::class.java)!!
     }
@@ -39,7 +43,19 @@ class AgencyService {
         } ?: GetByIdResult.NotFound
 
     fun updateBankAccount(updateBankAccountForm: AgencyUpdateBankAccountForm): AgencyUpdateBankAccountResult {
-        TODO("payment bind request")
+        val response = paymentClient.bindAgency(
+            agencyBindRequest = AgencyBindRequest(
+                agencyId = updateBankAccountForm.agencyId,
+                bankAccountNumber = updateBankAccountForm.bankAccountId
+            )
+        )
+
+        return if (response.statusCode.is2xxSuccessful)
+            AgencyUpdateBankAccountResult.Success
+        else
+            AgencyUpdateBankAccountResult.UnknownError(response.body.toString()).also {
+                LOGGER.error(it.message)
+            }
     }
 }
 
