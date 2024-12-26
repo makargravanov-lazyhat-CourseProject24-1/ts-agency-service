@@ -40,7 +40,7 @@ class AgencyServiceController(
     }
 
     @PostMapping("/update-bank")
-    fun updateBankAccount(updateBankAccountForm: AgencyUpdateBankAccountForm): ResponseEntity<*> =
+    fun updateBankAccount(@RequestBody updateBankAccountForm: AgencyUpdateBankAccountForm): ResponseEntity<*> =
         agencyService.updateBankAccount(updateBankAccountForm).let {
             when(it){
                 AgencyUpdateBankAccountResult.Success -> ResponseEntity.ok("Success")
