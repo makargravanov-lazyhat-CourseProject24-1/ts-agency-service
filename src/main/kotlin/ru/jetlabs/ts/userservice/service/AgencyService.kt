@@ -23,7 +23,10 @@ class AgencyService(
 
     fun registerAgency(registerAgencyForm: AgencyRegisterForm) =
         try {
-            Agencies.insertAndGetId { it[ownerId] = registerAgencyForm.ownerId }.value.let {
+            Agencies.insertAndGetId {
+                it[ownerId] = registerAgencyForm.ownerId
+                it[name] = registerAgencyForm.name
+            }.value.let {
                 RegisterResult.Success(id = it)
             }
         } catch (e: SQLException) {
@@ -37,10 +40,27 @@ class AgencyService(
                 AgencyResponseForm(
                     id = it[Agencies.id].value,
                     ownerId = it[Agencies.ownerId],
+                    name = it[Agencies.name],
                     createdAt = it[Agencies.createdAt],
                 )
             )
         } ?: GetByIdResult.NotFound
+
+    fun getByOwnerId(ownerId: Long): GetByOwnerIdResult {
+        val agencies = Agencies.selectAll().where { Agencies.ownerId eq ownerId }.map {
+            AgencyResponseForm(
+                id = it[Agencies.id].value,
+                ownerId = it[Agencies.ownerId],
+                name = it[Agencies.name],
+                createdAt = it[Agencies.createdAt],
+            )
+        }
+        return if (agencies.isEmpty()) {
+            GetByOwnerIdResult.NotFound
+        } else {
+            GetByOwnerIdResult.Success(agencies)
+        }
+    }
 
     fun updateBankAccount(updateBankAccountForm: AgencyUpdateBankAccountForm): AgencyUpdateBankAccountResult {
         val response = paymentClient.bindAgency(

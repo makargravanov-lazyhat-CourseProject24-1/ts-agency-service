@@ -6,5 +6,6 @@ import java.time.LocalDateTime
 
 object Agencies : LongIdTable(name = "agencies") {
     val ownerId = long("ownerId")
+    val name = text("name")
     val createdAt = datetime("created_at").clientDefault { LocalDateTime.now() }
 }

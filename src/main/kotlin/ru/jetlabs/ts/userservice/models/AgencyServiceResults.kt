@@ -10,6 +10,11 @@ sealed interface GetByIdResult {
     data object NotFound : GetByIdResult
 }
 
+sealed interface GetByOwnerIdResult {
+    data class Success(val agencies: List<AgencyResponseForm>) : GetByOwnerIdResult
+    data object NotFound : GetByOwnerIdResult
+}
+
 sealed interface AgencyUpdateBankAccountResult {
     data object Success : AgencyUpdateBankAccountResult
     data class UnknownError(val message: String) : AgencyUpdateBankAccountResult
