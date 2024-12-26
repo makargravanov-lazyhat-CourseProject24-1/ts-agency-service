@@ -33,7 +33,7 @@ class AgencyServiceController(
     fun getMyAgencies(@PathVariable id: Long) : ResponseEntity<*>{
         return agencyService.getByOwnerId(ownerId = id).let {
             when(it) {
-                GetByOwnerIdResult.NotFound -> ResponseEntity.badRequest().body(it)
+                GetByOwnerIdResult.NotFound -> ResponseEntity.ok(emptyList())
                 is GetByOwnerIdResult.Success -> ResponseEntity.ok(it.agencies)
             }
         }
